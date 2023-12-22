@@ -48,13 +48,14 @@ func (deck *Deck) Draw() Card {
 
 // struct of player
 type Player struct {
-	Cards []Card
-	Score int
+	Cards  []Card
+	Score  int
+	CountA int
 }
 
 // making new player
 func NewPlayer() Player {
-	return Player{}
+	return Player{CountA: 0}
 }
 
 // add card to player
@@ -64,14 +65,23 @@ func (player *Player) AddCard(card Card) {
 	tmp := 0
 	switch card.Value {
 	case "A":
-		tmp = 1
+		tmp = 11
+		player.CountA++
 	case "J", "Q", "K":
 		tmp = 10
 	default:
 		tmp, _ = strconv.Atoi(card.Value)
 	}
+
 	player.Score += tmp
+
+	//adjust A
+	if player.Score > 21 && player.CountA > 0 {
+		player.Score -= 10
+		player.CountA--
+	}
 }
+
 func main() {
 	//making deck
 	deck := NewDeck()
@@ -130,7 +140,7 @@ func main() {
 	} else {
 		fmt.Println("ディーラーの勝ちです.")
 	}
-	
+
 	fmt.Println("ブラックジャックを終了します。")
 }
 func abs(x int) int {
