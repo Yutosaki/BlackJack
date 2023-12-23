@@ -31,7 +31,7 @@ func NewDeck() *Deck {
 	return deck
 }
 
-// shuPffle
+// shuffle
 func (deck *Deck) Shuffle() {
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(deck.Cards), func(i, j int) {
@@ -75,7 +75,7 @@ func (player *Player) AddCard(card Card) {
 
 	player.Score += tmp
 
-	//adjust A
+	//adjust　A
 	if player.Score > 21 && player.CountA > 0 {
 		player.Score -= 10
 		player.CountA--
@@ -118,34 +118,45 @@ func main() {
 		}
 	}
 
-	fmt.Printf("ディーラーの引いた２枚目のカードは%sの%sでした。\n", dealer.Cards[1].Suit, dealer.Cards[1].Value)
-
-	//dealer draw
-	i = 2
-	for dealer.Score < 17 {
-		fmt.Printf("ディーラーの現在の得点は%dです\n", dealer.Score)
-		dealer.AddCard(deck.Draw())
-		fmt.Println("17より小さいのでカードを引きます。")
-		fmt.Printf("ディーラーの引いたカードは%sの%sでした。\n", dealer.Cards[i].Suit, dealer.Cards[i].Value)
-		i++
-	}
-
-	//confirm the values
-	fmt.Printf("あなたの得点は%dです。\n", player.Score)
-	fmt.Printf("ディーラーの得点は%dです\n", dealer.Score)
-	if (21 - dealer.Score) > (21 - player.Score) {
-		fmt.Println("あなたの勝ちです!")
-	} else if (21 - dealer.Score) == (21 - player.Score) {
-		fmt.Println("引き分けです.")
+	if checkOver21(&player) {
+		fmt.Println("21を超えました\nあなたの負けです。")
 	} else {
-		fmt.Println("ディーラーの勝ちです.")
-	}
 
-	fmt.Println("ブラックジャックを終了します。")
-}
-func abs(x int) int {
-	if x >= 0 {
-		return x
+		fmt.Printf("ディーラーの引いた２枚目のカードは%sの%sでした。\n", dealer.Cards[1].Suit, dealer.Cards[1].Value)
+
+		//dealer draw
+		i = 2
+		for dealer.Score < 17 {
+			fmt.Printf("ディーラーの現在の得点は%dです\n", dealer.Score)
+			dealer.AddCard(deck.Draw())
+			fmt.Println("17より小さいのでカードを引きます。")
+			fmt.Printf("ディーラーの引いたカードは%sの%sでした。\n", dealer.Cards[i].Suit, dealer.Cards[i].Value)
+			i++
+		}
+		if checkOver21(&dealer) {
+			fmt.Println("21を超えました。\nあなたの勝ちです。")
+		} else {
+
+			//confirm the values
+			fmt.Printf("あなたの得点は%dです。\n", player.Score)
+			fmt.Printf("ディーラーの得点は%dです\n", dealer.Score)
+			if (21 - dealer.Score) > (21 - player.Score) {
+				fmt.Println("あなたの勝ちです!")
+			} else if (21 - dealer.Score) == (21 - player.Score) {
+				fmt.Println("引き分けです.")
+			} else {
+				fmt.Println("ディーラーの勝ちです.")
+			}
+
+			fmt.Println("ブラックジャックを終了します。")
+		}
 	}
-	return -x
+}
+
+// check under 21
+func checkOver21(player *Player) bool {
+	if player.Score > 21 {
+		return true
+	}
+	return false
 }
