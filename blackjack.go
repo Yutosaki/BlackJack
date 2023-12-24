@@ -33,8 +33,10 @@ func NewDeck() *Deck {
 
 // shuffle
 func (deck *Deck) Shuffle() {
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(len(deck.Cards), func(i, j int) {
+	src := rand.NewSource(time.Now().UnixNano())
+	rng := rand.New(src)
+
+	rng.Shuffle(len(deck.Cards), func(i, j int) {
 		deck.Cards[i], deck.Cards[j] = deck.Cards[j], deck.Cards[i]
 	})
 }
